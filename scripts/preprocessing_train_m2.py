@@ -113,7 +113,7 @@ def data_gen(folder, rain, temp, soil, output_filename):
         catDf[_][(catDf[_]==-9999.0)] = np.nan 
     df = pd.concat([numDf, catDf], axis=1, join='outer')
     # Drop columns that we do not want to impute missing values in
-    data = df.drop(['SuperfDep', ''], axis=1)
+    data = df.drop(['RockClass', 'ShSwell', 'SuperfDep', 'LUC'], axis=1)
     imp_df = DataFrameImputer().fit_transform(data)
     assert len(imp_df.isna()==0), "Imputing Error: imputed dataframe contains NaN"
     imp_df = pd.concat([imp_df, df['SuperfDep']], axis=1)
@@ -129,20 +129,20 @@ def data_gen(folder, rain, temp, soil, output_filename):
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
     
-#data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall", "rcp85_model_2015-2024_summer_tas.tif", 
-#         "rcp85_model_2015-2024_winter-summer_soil.tif", "prediction/rcp85_2015-2024.h5")
-#data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall", "rcp85_model_2020-2029_summer_tas.tif", 
-#         "rcp85_model_2020-2029_winter-summer_soil.tif", "prediction/rcp85_2020-2029.h5")
-#data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2025-2034_summer_tas.tif", 
-#         "rcp85_model_2025-2034_winter-summer_soil.tif", "prediction/rcp85_2025-2034.h5")
-#data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2030-2039_summer_tas.tif", 
-#         "rcp85_model_2030-2039_winter-summer_soil.tif", "prediction/rcp85_2030-2039.h5")
-#data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-#         "rcp85_model_2035-2044_winter-summer_soil.tif", "prediction/rcp85_2035-2044.h5")
-#data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-#         "rcp85_model_2040-2049_winter-summer_soil.tif", "prediction/rcp85_2040-2049.h5")
-#data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-#        "rcp85_model_2045-2054_winter-summer_soil.tif", "prediction/rcp85_2045-2054.h5")
+data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall", "rcp85_model_2015-2024_summer_tas.tif", 
+         "rcp85_model_2015-2024_winter-summer_soil.tif", "prediction/rcp85_2015-2024.h5")
+data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall", "rcp85_model_2020-2029_summer_tas.tif", 
+         "rcp85_model_2020-2029_winter-summer_soil.tif", "prediction/rcp85_2020-2029.h5")
+data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2025-2034_summer_tas.tif", 
+         "rcp85_model_2025-2034_winter-summer_soil.tif", "prediction/rcp85_2025-2034.h5")
+data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2030-2039_summer_tas.tif", 
+         "rcp85_model_2030-2039_winter-summer_soil.tif", "prediction/rcp85_2030-2039.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
+         "rcp85_model_2035-2044_winter-summer_soil.tif", "prediction/rcp85_2035-2044.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
+         "rcp85_model_2040-2049_winter-summer_soil.tif", "prediction/rcp85_2040-2049.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
+        "rcp85_model_2045-2054_winter-summer_soil.tif", "prediction/rcp85_2045-2054.h5")
 data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
          "rcp85_model_2055-2064_winter-summer_soil.tif", "prediction/rcp85_2055-2064.h5")
 data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall", "rcp85_model_2060-2069_summer_tas.tif", 
