@@ -86,7 +86,7 @@ cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_0
 cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_1.nc",
             "unknown", "tifs/train2018/soilmoisture_lyr1.tif")
 cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_2.nc",
-            "unknown", "tifs/train2018/soilmoisture_lyr3.tif")   
+            "unknown", "tifs/train2018/soilmoisture_lyr2.tif")
 cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_3.nc",
             "unknown", "tifs/train2018/soilmoisture_lyr3.tif")         
 #reproj_soil("netcdfs/rcp85_model_2015-2024_winter-summer_soil_moisture_all_layer_sum.nc",
@@ -115,4 +115,4 @@ cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_3
 add_rasters("tifs/train2018/soilmoisture_lyr0.tif", "tifs/train2018/soilmoisture_lyr1.tif", 
            "tifs/train2018/soilmoisture_lyr2.tif", "tifs/train2018/soilmoisture_lyr3.tif",
             "tifs/train2018/cumulative_soilmoisture.tif")
-interpolate("tifs/train2018/cumulative_soilmoisture.tif", "tifs/train2018/soil_moisture_sm.tif")
+interpolate_rasters("tifs/train2018/cumulative_soilmoisture.tif", "tifs/train2018/soil_moisture_sm.tif")
