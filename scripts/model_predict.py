@@ -29,30 +29,30 @@ def predict(model, data, outraster):
     band.SetNoDataValue(-9999)
     dst_ds = None
     
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2015-2024.h5",
-#        "rcp85outputs/rcp85_2015-2024.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2020-2029.h5",
-#        "rcp85outputs/rcp85_2020-2029.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2025-2034.h5",
-#        "rcp85outputs/rcp85_2025-2034.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2030-2039.h5",
-#        "rcp85outputs/rcp85_2030-2039.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2035-2044.h5",
-#        "rcp85outputs/rcp85_2035-2044.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2040-2049.h5",
-#        "rcp85outputs/rcp85_2040-2049.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2045-2054.h5",
-#        "rcp85outputs/rcp85_2045-2054.tif")
-#predict("climate_cond_models/trained_cumul_soil.joblib", 
-#        "prediction/rcp85_2050-2059.h5",
-#        "rcp85outputs/rcp85_2050-2059.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2015-2024.h5",
+        "rcp85outputs/rcp85_2015-2024.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2020-2029.h5",
+        "rcp85outputs/rcp85_2020-2029.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2025-2034.h5",
+        "rcp85outputs/rcp85_2025-2034.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2030-2039.h5",
+        "rcp85outputs/rcp85_2030-2039.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2035-2044.h5",
+        "rcp85outputs/rcp85_2035-2044.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2040-2049.h5",
+        "rcp85outputs/rcp85_2040-2049.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2045-2054.h5",
+        "rcp85outputs/rcp85_2045-2054.tif")
+predict("climate_cond_models/trained_cumul_soil.joblib", 
+        "prediction/rcp85_2050-2059.h5",
+        "rcp85outputs/rcp85_2050-2059.tif")
 predict("climate_cond_models/trained_cumul_soil.joblib", 
         "prediction/rcp85_2055-2064.h5",
         "rcp85outputs/rcp85_2055-2064.tif")

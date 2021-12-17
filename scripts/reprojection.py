@@ -59,21 +59,21 @@ reproj_soil("netcdfs/rcp85_model_2070-2079_summer_tas.nc", "tas", "tifs/train201
 
 # rainfall 
 reproj_climate("netcdfs/rcp85_model_2015-2024_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2015-2024_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2015-2024_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2020-2029_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2020-2029_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2020-2029_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2025-2034_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2025-2034_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2025-2034_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2030-2029_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2030-2039_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2030-2039_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2035-2044_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2035-2044_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2035-2044_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2060-2069_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2060-2069_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2060-2069_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2065-2074_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2065-2074_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2065-2074_winter-summer_rainfall.tif")
 reproj_climate("netcdfs/rcp85_model_2070-2079_winter-summer_rainfall.nc", 
-               "unknown", "tifs/train2018/rcp85_model_2070-2079_winter-summer_rainfall")
+               "unknown", "tifs/train2018/rcp85_model_2070-2079_winter-summer_rainfall.tif")
 
 # soil
 reproj_soil("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_0.nc",

@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 22 17:32:43 2021
-
-@author: HamishMitchell
-"""
 # IMPORT PACKAGES
 import ast
 import pandas as pd
@@ -93,13 +87,11 @@ def data_gen(folder, rain, temp, soil, output_filename):
     LUC_map = {10: 'Tree cover', 20: 'Shrubland', 30: 'Grassland', 40: 'Cropland',
                50: 'Built-up', 60: 'Sparse vegetation', 80: 'Permanent water bodies',
                90: 'Herbaceous wetland', 100: 'Moss and lichen'}
-
     df['ShSwell'].replace(shswell_dict, inplace=True)
     df['SuperfDep'].replace(sup_dict, inplace=True)
     df['RockClass'].replace(geo_dict, inplace=True)
     df['LUC'].replace(LUC_map, inplace=True)
     df['s'].replace(-9999, 0, inplace=True)
-
     
     print(df.isna().sum(), f"Percentage missing data:\n{100*(df.isna().sum()/len(df))}") # No bgs data in Ireland
     print('imputing')
@@ -113,11 +105,10 @@ def data_gen(folder, rain, temp, soil, output_filename):
         catDf[_][(catDf[_]==-9999.0)] = np.nan 
     df = pd.concat([numDf, catDf], axis=1, join='outer')
     # Drop columns that we do not want to impute missing values in
-    data = df.drop(['RockClass', 'ShSwell', 'SuperfDep', 'LUC'], axis=1)
+    data = df.drop(['RockClass', 'ShSwell','SuperfDep', "Disp_cmyr"], axis=1)
     imp_df = DataFrameImputer().fit_transform(data)
     assert len(imp_df.isna()==0), "Imputing Error: imputed dataframe contains NaN"
-    imp_df = pd.concat([imp_df, df['SuperfDep']], axis=1)
-    
+    imp_df = pd.concat([imp_df, df[["RockClass", "ShSwell", "SuperfDep", "Disp_cmyr"]]], axis=1)
     
     print('encoding')
     # ENCODING
@@ -128,7 +119,11 @@ def data_gen(folder, rain, temp, soil, output_filename):
     temp_df = imp_df.drop(['RockClass', 'ShSwell', 'SuperfDep', 'LUC'], axis=1)
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
-    
+
+# training 
+data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif", 
+         "cumulative_soilmoisture.tif", "prediction/rcp85_training.h5")
+# prediction
 data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall", "rcp85_model_2015-2024_summer_tas.tif", 
          "rcp85_model_2015-2024_winter-summer_soil.tif", "prediction/rcp85_2015-2024.h5")
 data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall", "rcp85_model_2020-2029_summer_tas.tif", 
