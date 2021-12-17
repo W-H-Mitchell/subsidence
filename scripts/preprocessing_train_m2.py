@@ -122,7 +122,7 @@ def data_gen(folder, rain, temp, soil, output_filename):
 
 # training 
 data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif", 
-         "cumulative_soilmoisture.tif", "prediction/rcp85_training.h5")
+         "cumulative_soilmoisture.tif", "training/rcp85_training.h5")
 # prediction
 data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall", "rcp85_model_2015-2024_summer_tas.tif", 
          "rcp85_model_2015-2024_winter-summer_soil.tif", "prediction/rcp85_2015-2024.h5")
