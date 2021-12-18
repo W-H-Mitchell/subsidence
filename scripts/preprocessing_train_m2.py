@@ -32,7 +32,7 @@ def ord_enc(df, col):
     data_enc = pd.DataFrame(data_enc.flatten(), columns=[col], index=df.index)
     return data_enc
 
-def data_gen(folder, rain, temp, soil, output_filename):
+def data_gen(folder, rain, temp, output_filename):
     # rasters
     z = gdal.Open("tifs/dem_gb.tif")
     s = gdal.Open("tifs/slope_gb.tif")
@@ -46,12 +46,12 @@ def data_gen(folder, rain, temp, soil, output_filename):
     # climate data
     rain = gdal.Open(folder+rain)
     temp = gdal.Open(folder+temp)
-    soil = gdal.Open(folder+soil)
+    #soil = gdal.Open(folder+soil)
 
     
     # Stack the geotifs of each feature and merge into a dataframe
     dfs = [z, s, rock, sh, supf, luc, veg, 
-           rivers, disp, rain, temp, soil] 
+           rivers, disp, rain, temp]
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
     merged = gdal.BuildVRT('', dfs, separate=True)
@@ -60,7 +60,7 @@ def data_gen(folder, rain, temp, soil, output_filename):
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
     column_names = ['z', 's', "RockClass", "ShSwell", "SuperfDep", "LUC", 
                     "NDVI", "DistRiv_m", "Disp_cmyr", "Rainfall", "deg_c",
-                    "soil_moisture"]
+                    ]
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
     df['row'] = row.flatten()
     df['col'] = cols.flatten()
@@ -121,28 +121,28 @@ def data_gen(folder, rain, temp, soil, output_filename):
     processDF.to_hdf(output_filename, key='df', mode='w')
 
 # training 
-data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif", 
-         "cumulative_soilmoisture.tif", "training/rcp85_training.h5")
-# prediction
-data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall", "rcp85_model_2015-2024_summer_tas.tif", 
-         "rcp85_model_2015-2024_winter-summer_soil.tif", "prediction/rcp85_2015-2024.h5")
-data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall", "rcp85_model_2020-2029_summer_tas.tif", 
-         "rcp85_model_2020-2029_winter-summer_soil.tif", "prediction/rcp85_2020-2029.h5")
-data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2025-2034_summer_tas.tif", 
-         "rcp85_model_2025-2034_winter-summer_soil.tif", "prediction/rcp85_2025-2034.h5")
-data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall", "rcp85_model_2030-2039_summer_tas.tif", 
-         "rcp85_model_2030-2039_winter-summer_soil.tif", "prediction/rcp85_2030-2039.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-         "rcp85_model_2035-2044_winter-summer_soil.tif", "prediction/rcp85_2035-2044.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-         "rcp85_model_2040-2049_winter-summer_soil.tif", "prediction/rcp85_2040-2049.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-        "rcp85_model_2045-2054_winter-summer_soil.tif", "prediction/rcp85_2045-2054.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall", "rcp85_model_2035-2044_summer_tas.tif", 
-         "rcp85_model_2055-2064_winter-summer_soil.tif", "prediction/rcp85_2055-2064.h5")
-data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall", "rcp85_model_2060-2069_summer_tas.tif", 
-         "rcp85_model_2060-2069_winter-summer_soil.tif", "prediction/rcp85_2060-2069.h5")
-data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall", "rcp85_model_2065-2074_summer_tas.tif", 
-         "rcp85_model_2065-2074_winter-summer_soil.tif", "prediction/rcp85_2065-2074.h5")
+#data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif",
+#         "training/rcp85_training_no_soil.h5")
 
+# prediction
+data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall.tif", "rcp85_model_2015-2024_summer_tas.tif",
+         "prediction/rcp85_2015-2024.h5")
+data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif", "rcp85_model_2020-2029_summer_tas.tif",
+         "prediction/rcp85_2020-2029.h5")
+data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif", "rcp85_model_2025-2034_summer_tas.tif",
+         "prediction/rcp85_2025-2034.h5")
+data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif", "rcp85_model_2030-2039_summer_tas.tif",
+         "prediction/rcp85_2030-2039.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+         "prediction/rcp85_2035-2044.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+         "prediction/rcp85_2040-2049.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+         "prediction/rcp85_2045-2054.h5")
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+         "prediction/rcp85_2055-2064.h5")
+data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall.tif", "rcp85_model_2060-2069_summer_tas.tif",
+         "prediction/rcp85_2060-2069.h5")
+data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif", "rcp85_model_2065-2074_summer_tas.tif",
+         "prediction/rcp85_2065-2074.h5")
 

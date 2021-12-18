@@ -50,45 +50,45 @@ def add_rasters(in1, in2, in3, in4, out):
 #nc2 = rxr.open_rasterio("netcdfs/obs_winter-summer_total_rainfall_2017-2018.nc") #unknown
     
 # temperature
-#reproj_climate("netcdfs/obs_summer_mean_tas_2018.nc", "tas", "tifs/train2018/summer_temperature.tif")
-#reproj_climate("netcdfs/rcp85_model_2015-2024_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2015-2024_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2020-2029_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2020-2029_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2025-2034_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2025-2034_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2030-2039_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2030-2039_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2035-2044_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2035-2044_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2060-2069_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2060-2069_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2065-2074_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2065-2074_summer_tas.tif")
-#reproj_climate("netcdfs/rcp85_model_2070-2079_summer_tas.nc", "tas", "tifs/train2018/rcp85_model_2070-2079_summer_tas.tif")
+reproj_climate("netcdfs/obs_summer_mean_tas_2018.nc", "tas", "tifs/train2018/summer_temperature.tif")
+reproj_climate("netcdfs/rcp85_model_2015-2024_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2015-2024_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2020-2029_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2020-2029_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2025-2034_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2025-2034_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2030-2039_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2030-2039_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2035-2044_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2035-2044_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2060-2069_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2060-2069_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2065-2074_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2065-2074_summer_tas.tif")
+reproj_climate("netcdfs/rcp85_model_2070-2079_summer_tas.nc", "tas", "tifs/predict/rcp85_model_2070-2079_summer_tas.tif")
 
 # rainfall
-#reproj_climate("netcdfs/obs_winter-summer_total_rainfall_2017-2018.nc", "unknown",
-#            "tifs/train2018/winter-summer_rain2018.tif")
-#reproj_climate("netcdfs/rcp85_model_2015-2024_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2015-2024_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2020-2029_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2020-2029_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2025-2034_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2025-2034_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2030-2029_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2030-2039_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2035-2044_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2035-2044_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2060-2069_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2060-2069_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2065-2074_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2065-2074_winter-summer_rainfall.tif")
-#reproj_climate("netcdfs/rcp85_model_2070-2079_winter-summer_rainfall.nc",
-#               "unknown", "tifs/train2018/rcp85_model_2070-2079_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/obs_winter-summer_total_rainfall_2017-2018.nc", "unknown",
+               "tifs/train2018/winter-summer_rain2018.tif")
+reproj_climate("netcdfs/rcp85_model_2015-2024_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2015-2024_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2020-2029_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2020-2029_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2025-2034_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2025-2034_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2030-2029_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2030-2039_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2035-2044_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2035-2044_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2060-2069_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2060-2069_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2065-2074_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2065-2074_winter-summer_rainfall.tif")
+reproj_climate("netcdfs/rcp85_model_2070-2079_winter-summer_rainfall.nc",
+               "unknown", "tifs/predict/rcp85_model_2070-2079_winter-summer_rainfall.tif")
 
 # soil
-cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_0.nc",
-            "unknown", "tifs/train2018/soilmoisture_lyr0.tif")
-cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_1.nc",
-            "unknown", "tifs/train2018/soilmoisture_lyr1.tif")
-cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_2.nc",
-            "unknown", "tifs/train2018/soilmoisture_lyr2.tif")
-cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_3.nc",
-            "unknown", "tifs/train2018/soilmoisture_lyr3.tif")         
+#cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_0.nc",
+#            "unknown", "tifs/train2018/soilmoisture_lyr0.tif")
+#cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_1.nc",
+#            "unknown", "tifs/train2018/soilmoisture_lyr1.tif")
+#cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_2.nc",
+#            "unknown", "tifs/train2018/soilmoisture_lyr2.tif")
+#cdf_tiff("netcdfs/rcp85_mod_summer_mean_soil_moisture_winter-summer_2018_layer_3.nc",
+#            "unknown", "tifs/train2018/soilmoisture_lyr3.tif")
 #reproj_soil("netcdfs/rcp85_model_2015-2024_winter-summer_soil_moisture_all_layer_sum.nc",
 #            "unknown", "tifs/predict/rcp85_model_2015-2024_winter-summer_soil.tif")
 #reproj_soil("netcdfs/rcp85_model_2020-2029_winter-summer_soil_moisture_all_layer_sum.nc",
