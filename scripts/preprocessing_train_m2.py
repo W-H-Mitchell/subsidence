@@ -92,7 +92,8 @@ def data_gen(folder, rain, temp, output_filename):
     df['RockClass'].replace(geo_dict, inplace=True)
     df['LUC'].replace(LUC_map, inplace=True)
     df['s'].replace(-9999, 0, inplace=True)
-    
+    df['Disp_cmyr'] = df["Disp_cmyr"].values * 10
+
     print(df.isna().sum(), f"Percentage missing data:\n{100*(df.isna().sum()/len(df))}") # No bgs data in Ireland
     print('imputing')
     # IMPUTER
@@ -125,6 +126,7 @@ def data_gen(folder, rain, temp, output_filename):
 #         "training/rcp85_training_no_soil.h5")
 
 # prediction
+"""
 data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall.tif", "rcp85_model_2015-2024_summer_tas.tif",
          "prediction/rcp85_2015-2024.h5")
 data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif", "rcp85_model_2020-2029_summer_tas.tif",
@@ -145,4 +147,7 @@ data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall.tif", "r
          "prediction/rcp85_2060-2069.h5")
 data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif", "rcp85_model_2065-2074_summer_tas.tif",
          "prediction/rcp85_2065-2074.h5")
+"""
+data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif", "rcp85_model_2070-2079_summer_tas.tif",
+         "prediction/rcp85_2070-2079.h5")
 

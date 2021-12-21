@@ -29,6 +29,7 @@ def predict(model, data, outraster):
     band.SetNoDataValue(-9999)
     dst_ds = None
 
+"""
 predict("climate_cond_models/rcp85_trained_no_soil.joblib",
         "prediction/rcp85_2015-2024.h5",
         "rcp85outputs/rcp85_2015-2024.tif")
@@ -50,12 +51,19 @@ predict("climate_cond_models/rcp85_trained_no_soil.joblib",
 predict("climate_cond_models/rcp85_trained_no_soil.joblib",
         "prediction/rcp85_2045-2054.h5",
         "rcp85outputs/rcp85_2045-2054.tif")
-#predict("climate_cond_models/rcp85_trained_no_soil.joblib",
-#        "prediction/rcp85_2055-2064.h5",
-#        "rcp85outputs/rcp85_2055-2064.tif")
+predict("climate_cond_models/rcp85_trained_no_soil.joblib",
+        "prediction/rcp85_2045-2054.h5",
+        "rcp85outputs/rcp85_2050-2059.tif")
+predict("climate_cond_models/rcp85_trained_no_soil.joblib",
+        "prediction/rcp85_2055-2064.h5",
+        "rcp85outputs/rcp85_2055-2064.tif")
 predict("climate_cond_models/rcp85_trained_no_soil.joblib",
         "prediction/rcp85_2060-2069.h5",
         "rcp85outputs/rcp85_2060-2069.tif")
 predict("climate_cond_models/rcp85_trained_no_soil.joblib",
         "prediction/rcp85_2065-2074.h5",
         "rcp85outputs/rcp85_2065-2074.tif")
+"""
+predict("climate_cond_models/rcp85_trained_no_soil.joblib",
+        "prediction/rcp85_2070-2079.h5",
+        "rcp85outputs/rcp85_2070-2079.tif")
