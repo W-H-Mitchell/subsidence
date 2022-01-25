@@ -6,6 +6,28 @@ from osgeo import gdal
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.base import TransformerMixin
 
+# lat long
+def lat_lon_transform(input_filepath, reference_filepath, output_filepath):
+    inputfile = input_filepath  # Path to input file
+    inpt = gdal.Open(inputfile)
+    inputProj = inpt.GetProjection()
+
+    referencefile = reference_filepath  # Path to reference file
+    reference = gdal.Open(referencefile)  # reads in the reference raster
+    referenceProj = reference.GetProjection()  # obtains the crs
+    referenceTrans = reference.GetGeoTransform()  # geotransform which contains extent, resolution data
+    bandreference = reference.GetRasterBand(1)  # dw about this, you can get multiband rasters but we only have one
+    x = reference.RasterXSize  # get the raster array xsize, ie., number of pixels in x direction
+    y = reference.RasterYSize
+
+    outputfile = output_filepath  # Path to output file to be created
+    driver = gdal.GetDriverByName('GTiff')  # type of driver needed for the output file
+    output = driver.Create(outputfile, x, y, 1, bandreference.DataType)  # creates output
+    output.SetGeoTransform(referenceTrans)
+    output.SetProjection(referenceProj)
+    output.GetRasterBand(1).SetNoDataValue(-9999)
+    gdal.ReprojectImage(inpt, output, inputProj, referenceProj, gdalconst.GRA_Bilinear)  # reprojects the output
+
 # Create the dataframe imputer class
 class DataFrameImputer(TransformerMixin):
     def __init__(self):
@@ -34,15 +56,15 @@ def ord_enc(df, col):
 
 def data_gen(folder, rain, temp, output_filename):
     # rasters
-    z = gdal.Open("tifs/dem_gb.tif")
+    z = gdal.Open("tifs/final_dem.tif")
     s = gdal.Open("tifs/slope_gb.tif")
     rock = gdal.Open("tifs/lithology_gb.tif")
-    sh = gdal.Open("tifs/shrinkswell_gb.tif")
     supf = gdal.Open("tifs/superficial_gb.tif")
+    swel = gdal.Open("tifs/shrinkswell_gb.tif")
     luc = gdal.Open("tifs/landuse_gb.tif")
     veg = gdal.Open("tifs/ndvi_gb.tif") #NDVI
     rivers = gdal.Open("tifs/rivers_gb.tif")
-    disp = gdal.Open("tifs/displacement_cmyr.tif") # subsidence; target variable training data
+    disp = gdal.Open("tifs/reproject_v2dinsar copy.tif") # subsidence; target variable training data
     # climate data
     rain = gdal.Open(folder+rain)
     temp = gdal.Open(folder+temp)
@@ -50,7 +72,7 @@ def data_gen(folder, rain, temp, output_filename):
 
     
     # Stack the geotifs of each feature and merge into a dataframe
-    dfs = [z, s, rock, sh, supf, luc, veg, 
+    dfs = [z, s, rock, supf, swel, luc, veg,
            rivers, disp, rain, temp]
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
@@ -58,7 +80,7 @@ def data_gen(folder, rain, temp, output_filename):
     merged_data = merged.ReadAsArray()
     ysize, xsize = merged.RasterYSize, merged.RasterXSize
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
-    column_names = ['z', 's', "RockClass", "ShSwell", "SuperfDep", "LUC", 
+    column_names = ['z', 's', "RockClass", "SuperfDep", "Swell", "LUC",
                     "NDVI", "DistRiv_m", "Disp_cmyr", "Rainfall", "deg_c",
                     ]
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
@@ -74,26 +96,32 @@ def data_gen(folder, rain, temp, output_filename):
     contents = geo_file.read()
     geo_dict = ast.literal_eval(contents)
     geo_dict = dict((v,k) for k,v in geo_dict.items())
+    # swell
+    swell_file = open("shrinkswell_dictionary.txt", "r")
+    contents = swell_file.read()
+    swell_dict = ast.literal_eval(contents)
+    swell_dict = dict((v,k) for k,v in swell_dict.items())
     # superficial 
     sup_file = open("superficial_dictionary.txt", "r")
     contents = sup_file.read()
     sup_dict = ast.literal_eval(contents)
     sup_dict = dict((v,k) for k,v in sup_dict.items())
-    # shrink swell
-    shswell_file = open("shrinkswell_dictionary.txt", "r")
-    contents = shswell_file.read()
-    shswell_dict = ast.literal_eval(contents)
-    shswell_dict = dict((v,k) for k,v in shswell_dict.items())
     LUC_map = {10: 'Tree cover', 20: 'Shrubland', 30: 'Grassland', 40: 'Cropland',
                50: 'Built-up', 60: 'Sparse vegetation', 80: 'Permanent water bodies',
                90: 'Herbaceous wetland', 100: 'Moss and lichen'}
-    df['ShSwell'].replace(shswell_dict, inplace=True)
+
+    # replace added new values
+    df['RockClass'][~df['RockClass'].isin(geo_dict.keys())] = np.nan
+    df['SuperfDep'][~df['SuperfDep'].isin(sup_dict.keys())] = np.nan
+    df['Swell'][~df['Swell'].isin(swell_dict.keys())] = np.nan
+    df['Swell'].replace(swell_dict, inplace=True)
+
     df['SuperfDep'].replace(sup_dict, inplace=True)
     df['RockClass'].replace(geo_dict, inplace=True)
     df['LUC'].replace(LUC_map, inplace=True)
     df['s'].replace(-9999, 0, inplace=True)
     df['Disp_cmyr'] = df["Disp_cmyr"].values * 10
-
+    
     print(df.isna().sum(), f"Percentage missing data:\n{100*(df.isna().sum()/len(df))}") # No bgs data in Ireland
     print('imputing')
     # IMPUTER
@@ -106,48 +134,54 @@ def data_gen(folder, rain, temp, output_filename):
         catDf[_][(catDf[_]==-9999.0)] = np.nan 
     df = pd.concat([numDf, catDf], axis=1, join='outer')
     # Drop columns that we do not want to impute missing values in
-    data = df.drop(['RockClass', 'ShSwell','SuperfDep', "Disp_cmyr"], axis=1)
+    data = df.drop(['RockClass', 'SuperfDep', 'Swell' "Disp_cmyr"], axis=1)
     imp_df = DataFrameImputer().fit_transform(data)
     assert len(imp_df.isna()==0), "Imputing Error: imputed dataframe contains NaN"
-    imp_df = pd.concat([imp_df, df[["RockClass", "ShSwell", "SuperfDep", "Disp_cmyr"]]], axis=1)
+    imp_df = pd.concat([imp_df, df[["RockClass", "SuperfDep", "Swell", "Disp_cmyr"]]], axis=1)
     
     print('encoding')
     # ENCODING
     enc_catDF = pd.DataFrame(index=catDf.index)
-    cat_variables = imp_df[['RockClass', 'ShSwell', 'SuperfDep', 'LUC']]
+    cat_variables = imp_df[['RockClass', 'SuperfDep', 'LUC', 'Swell']]
     cat_dummies = pd.get_dummies(cat_variables, drop_first=True)
     enc_catDF = pd.concat([enc_catDF, cat_dummies], axis=1) # Append encoded columns 
-    temp_df = imp_df.drop(['RockClass', 'ShSwell', 'SuperfDep', 'LUC'], axis=1)
+    temp_df = imp_df.drop(['RockClass', 'SuperfDep', 'LUC', 'Swell'], axis=1)
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
 
-# training 
-#data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif",
-#         "training/rcp85_training_no_soil.h5")
+# lat long transform
 
-# prediction
-"""
-data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall.tif", "rcp85_model_2015-2024_summer_tas.tif",
+# training 
+data_gen("tifs/train2018/", "winter-summer_rain2018.tif", "summer_temperature.tif",
+         "training/rcp85train_swell.h5")
+#data_gen("tifs/predict/", "rcp85_model_2015-2024_winter-summer_rainfall.tif", "rcp85_model_2015-2024_summer_tas.tif",
          "prediction/rcp85_2015-2024.h5")
+"""
+# prediction
+data_gen("tifs/predict/", "rcp85_baseline2020_rainfall.tif", "rcp85_baseline2020_tas.tif",
+         "prediction/rcp85_2020_baseline.h5")
 data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif", "rcp85_model_2020-2029_summer_tas.tif",
          "prediction/rcp85_2020-2029.h5")
 data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif", "rcp85_model_2025-2034_summer_tas.tif",
          "prediction/rcp85_2025-2034.h5")
-data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif", "rcp85_model_2030-2039_summer_tas.tif",
+data_gen("tifs/predict/", "rcp85_model_2030-2039_winter-summer_rainfall.tif", "rcp85_model_2030-2039_summer_tas.tif",
          "prediction/rcp85_2030-2039.h5")
 data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
          "prediction/rcp85_2035-2044.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+data_gen("tifs/predict/", "rcp85_model_2040-2049_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
          "prediction/rcp85_2040-2049.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+data_gen("tifs/predict/", "rcp85_model_2040-2049_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
          "prediction/rcp85_2045-2054.h5")
-data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+data_gen("tifs/predict/", "rcp85_model_2040-2049_winter-summer_rainfall.tif", "rcp85_model_2035-2044_summer_tas.tif",
+         "prediction/rcp85_2050-2059.h5")
+data_gen("tifs/predict/", "rcp85_model_2040-2049_winter-summer_rainfall.tif", "rcp85_model_2055-2064_summer_tas.tif",
          "prediction/rcp85_2055-2064.h5")
 data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall.tif", "rcp85_model_2060-2069_summer_tas.tif",
          "prediction/rcp85_2060-2069.h5")
 data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif", "rcp85_model_2065-2074_summer_tas.tif",
          "prediction/rcp85_2065-2074.h5")
-"""
 data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif", "rcp85_model_2070-2079_summer_tas.tif",
          "prediction/rcp85_2070-2079.h5")
-
+data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif", "rcp85_model_2075-2084_summer_tas.tif",
+         "prediction/rcp85_2075-2084.h5")
+"""

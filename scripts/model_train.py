@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 def train(train_data, outmodel, featout, outraster):
     df = pd.read_hdf(train_data, 'df')
     baseDF = df[df['Disp_cmyr'].notnull()] # remove null from the target class for training
+    print("Data shape with DInSAR nan: {0}; data shape without NaNs: {1}".format(df.shape, baseDF.shape))
     y = baseDF.loc[:, 'Disp_cmyr'] # target class
     X = baseDF.drop(['Disp_cmyr', 'row', 'col'], axis=1) # predictors 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
@@ -26,7 +27,7 @@ def train(train_data, outmodel, featout, outraster):
     RandRF_predY = rfr.predict(df.drop(['row', 'col', 'Disp_cmyr'], axis=1))
     # prediction to fill target class
     print("\n Creating raster...")
-    reference_raster = gdal.Open("tifs/dem_gb.tif")
+    reference_raster = gdal.Open("tifs/final_dem.tif")
     geo = reference_raster.GetGeoTransform()
     dem = reference_raster.ReadAsArray()
     xsize, ysize = reference_raster.RasterXSize, reference_raster.RasterYSize
@@ -44,8 +45,7 @@ def train(train_data, outmodel, featout, outraster):
     band = dst_ds.GetRasterBand(1)
     band.SetNoDataValue(-9999)
     dst_ds = None
-    
-    
+
     # feature importance
     importance = rfr.feature_importances_
     dictionary = {}
@@ -59,5 +59,5 @@ def train(train_data, outmodel, featout, outraster):
         # write every key and value to file
         w.writerow([key, val])
         
-train("training/rcp85_training_no_soil.h5", "rcp85_trained_no_soil", "rcp85_no_soil", "training/rcp85_train_no_soil.tif")
-#train("training/train_sep_soil.h5", "trained_sep_soil", 'separatesoil')
+train("training/rcp85train_no_cornwall.h5", "rcp85_trained_no_cornwall", "rcp85_no_cornwall",
+      "training/rcp85_no_cornwall.tif")
