@@ -3,10 +3,19 @@ from osgeo import gdal
 import numpy as np
 import pandas as pd
 import time
+import scipy.stats as st
+from scipy.stats import t
 
 def normalize(data, accuracy, nodata_accuracy):
     data[data <= -9999] = 0 # make no data values equal to zero
     return (accuracy-nodata_accuracy)*((data - np.min(data))/(np.max(data)-np.min(data)))+nodata_accuracy
+
+def confidence_interval(data, confidence=0.95):
+    m = x.mean()
+    s = data.std()
+    n = len(x)-1
+    t_crit = np.abs(t.ppf((1-confidence)/2,n))
+    return m-s*t_crit/np.sqrt(len(x)), m+s*t_crit/np.sqrt(len(x))
 
 def lat_lon(tif):
     ds = gdal.Open(tif)
@@ -48,6 +57,12 @@ def output(disp_tif, yr, rcp):
                                    'severity value': subs, 'hazard reliability':coher})
     out_data_frame['climate reliability'][out_data_frame['climate reliability'] > 1] = 0.94683767253075
 
+    # confidence interval
+    confidence_limits = st.t.interval(0.95, len(subs)-1, loc=np.mean(subs), scale=st.sem(subs)) # sem=standard error of measurement
+    lower, upper = confidence_limits[0], confidence_limits[1]
+    half_confidence_range = (upper - lower)/2
+
+    # output dataframe
     out_frame=pd.DataFrame(columns=
                           ['Latitude',
                            'Longitude',
@@ -73,12 +88,12 @@ def output(disp_tif, yr, rcp):
     out_data_frame['grid size (m)']= 90
     out_data_frame['hazard type']= 'subsidence'
     out_data_frame['severity metric']= 'displacement cm/yr'
-    out_data_frame['severity range']= 'nan'
+    out_data_frame['severity range']= f"+/-{half_confidence_range}"
     out_data_frame['metadata filename']= outname+'.txt'
-    out_data_frame['confidence percentile']=95
+    out_data_frame['confidence percentile']= 95
     out_data_frame['month or season']='annual'
-    out_data_frame['scenario']=rcp   
-    out_data_frame['year']=yr    
+    out_data_frame['scenario']= rcp
+    out_data_frame['year']= yr
     out_data_frame['likelihood']= 0.9
     out_data_frame['return time'] ='nan'
     out_data_frame['likelihood percentile value'] = 0.1
