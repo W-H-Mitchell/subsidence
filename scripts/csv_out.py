@@ -88,7 +88,7 @@ def output(disp_tif, yr, rcp):
     out_data_frame['grid size (m)']= 90
     out_data_frame['hazard type']= 'subsidence'
     out_data_frame['severity metric']= 'displacement cm/yr'
-    out_data_frame['severity range']= f"+/-{half_confidence_range}"
+    out_data_frame['severity range']= f"{subs-half_confidence_range}, {subs+half_confidence_range}"
     out_data_frame['metadata filename']= outname+'.txt'
     out_data_frame['confidence percentile']= 95
     out_data_frame['month or season']='annual'
