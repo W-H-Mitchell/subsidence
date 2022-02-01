@@ -1,0 +1,11 @@
+name: geospatial
+channels:
+- conda-forge
+dependencies:
+- python=3.7
+- gdal=3.0.2
+- spyder
+- geopandas
+- pip:
+  - wxee
+  - earthengine-api
