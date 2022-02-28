@@ -19,7 +19,7 @@ def confidence_interval(data, confidence=0.95):
 
 def lat_lon(tif):
     ds = gdal.Open(tif)
-    dem = gdal.Open("tifs/final_dem.tif").ReadAsArray()
+    dem = gdal.Open("tifs/uk_dem_wgs84_0.0008.tif").ReadAsArray()
     geot = ds.GetGeoTransform()
     subs =  ds.ReadAsArray()
     y, x = np.where(dem > -1000)
@@ -37,7 +37,7 @@ def lat_lon(tif):
 def output(disp_tif, yr, rcp):
     subs, longitude, latitude = lat_lon(disp_tif)
     dinsar = gdal.Open("tifs/reproject_v2dinsar copy.tif").ReadAsArray()
-    dem = gdal.Open("tifs/final_dem.tif").ReadAsArray()
+    dem = gdal.Open("tifs/uk_dem_wgs84_0.0008.tif").ReadAsArray()
     clim = gdal.Open("tifs/rainfall_verification.tif").ReadAsArray()
     sea = dem <= -1000
     clim[sea] = -9999
@@ -113,13 +113,12 @@ def output(disp_tif, yr, rcp):
 
 #rcp85
 output('rcp85outputs/rcp85_2020_baseline.tif', '2020', 'rcp85')
-output('rcp85outputs/rcp85_2015-2024.tif', '2020', 'rcp85')
-output('rcp85outputs/rcp85_2025-2034.tif', '2030', 'rcp85')
-output('rcp85outputs/rcp85_2030-2039.tif', '2040', 'rcp85')
-output('rcp85outputs/rcp85_2035-2044.tif', '2050', 'rcp85')
-output('rcp85outputs/rcp85_2060-2069.tif', '2060', 'rcp85')
-output('rcp85outputs/rcp85_2065-2074.tif', '2070', 'rcp85')
-output('rcp85outputs/rcp85_2070-2079.tif', '2080', 'rcp85')
+#output('rcp85outputs/rcp85_2025-2034.tif', '2030', 'rcp85')
+#output('rcp85outputs/rcp85_2030-2039.tif', '2040', 'rcp85')
+#output('rcp85outputs/rcp85_2035-2044.tif', '2050', 'rcp85')
+#output('rcp85outputs/rcp85_2060-2069.tif', '2060', 'rcp85')
+#output('rcp85outputs/rcp85_2065-2074.tif', '2070', 'rcp85')
+#output('rcp85outputs/rcp85_2070-2079.tif', '2080', 'rcp85')
 #rcp26
 output('rcp85outputs/rcp85_2020_baseline.tif', '2020', 'rcp26')
 output('rcp85outputs/rcp85_2020_baseline.tif', '2030', 'rcp26')

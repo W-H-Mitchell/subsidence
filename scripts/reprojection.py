@@ -14,7 +14,7 @@ def cdf_tiff(ncdf, lyr, tif):
     
 def reproj_climate(ncdf, lyr, tif):
     # dem reference raster
-    reference_raster = gdal.Open("tifs/final_dem.tif")
+    reference_raster = gdal.Open("tifs/final_dem.tif") # raster to use as reference array
     geo = reference_raster.GetGeoTransform()
     xsize, ysize = reference_raster.RasterXSize, reference_raster.RasterYSize
     x_res = geo[1]
@@ -24,7 +24,7 @@ def reproj_climate(ncdf, lyr, tif):
     max_x = geo[0] + xsize*geo[1] + ysize*geo[2]
     max_y = geo[3] 
     
-    cmd = "gdalwarp -overwrite -of  GTiff -r bilinear -t_srs 'epsg:4326' -tr {0} {1} -te {2} {3} {4} {5} NETCDF:'{6}':{7} {8}".format(x_res, y_res,min_x, min_y, max_x, max_y, ncdf, lyr, tif)
+    cmd = f"gdalwarp -overwrite -of  GTiff -t_srs 'epsg:4326' -tr {x_res} {y_res} -te {min_x} {min_y} {max_x} {max_y} NETCDF:'{ncdf}':{lyr} {tif}"
     os.system(cmd)
 
 def interpolate_rasters(tif, outtif):
