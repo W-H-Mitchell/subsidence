@@ -26,7 +26,16 @@ def lat_lon_transform(input_filepath, reference_filepath, output_filepath):
     output.SetGeoTransform(referenceTrans)
     output.SetProjection(referenceProj)
     output.GetRasterBand(1).SetNoDataValue(-9999)
-    gdal.ReprojectImage(inpt, output, inputProj, referenceProj, gdalconst.GRA_Bilinear)  # reprojects the output
+    gdal.ReprojectImage(inpt, output, inputProj, referenceProj, gdal.GRA_Bilinear) # reprojects the output
+
+
+    res = 90
+    project = 'epsg:4326'
+    bounds = [-10, 52, 10, 56]
+    options = gdal.WarpOptions(resampleAlg='nearest', xRes=res, yRes=90)
+    gdal.Warp(output_filepath,input_filepath,options=options )
+
+
 
 # Create the dataframe imputer class
 class DataFrameImputer(TransformerMixin):
