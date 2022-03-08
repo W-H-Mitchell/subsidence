@@ -17,7 +17,8 @@ def train(train_data, outmodel, featout, outraster):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
     
     # model
-    rfr = RandomForestRegressor(random_state=42, n_jobs=-1, min_samples_split=10000, verbose=100)
+    rfr = RandomForestRegressor(random_state=42, n_jobs=-1,
+                                min_samples_split=10000, verbose=100)
     rfr.fit(X_train, y_train)
     y_pred = rfr.predict(X_test)
     dump(rfr, 'climate_cond_models/{0}.joblib'.format(outmodel))
@@ -58,6 +59,6 @@ def train(train_data, outmodel, featout, outraster):
     for key, val in dictionary.items():
         # write every key and value to file
         w.writerow([key, val])
-        
-train("training/rcp85train_no_cornwall.h5", "rcp85_trained_no_cornwall", "rcp85_no_cornwall",
-      "training/rcp85_no_cornwall.tif")
+
+train("training/rcp85train_soil.h5", "rcp85_trained_soil", "rcp85_soil",
+      "training/rcp85_soil.tif")

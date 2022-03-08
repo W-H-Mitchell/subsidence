@@ -3,30 +3,31 @@ import os
 import glob
 import requests
 import subprocess
+from osgeo import gdal, ogr
 
 # lat long transform
 def lat_lon_transform(input_filepath, reference_filepath, output_filepath):
-    referencefile = reference_filepath  # Path to reference file
-    reference = gdal.Open(referencefile)  # reads in the reference raster
+    reference = gdal.Open(reference_filepath)  # reads in the reference raster
     referenceSRS = reference.GetProjection()
-    xsize, ysize = reference.RasterXSize, raster.RasterYSize
-    x_res = geo[1]
-    y_res = geo[5]
+    xsize, ysize = reference.RasterXSize, reference.RasterYSize
+    geo = reference.GetGeoTransform()
+    x_res, y_res = geo[1], geo[5]
     min_x = geo[0]
     min_y = geo[3] + xsize * geo[4] + ysize * geo[5]
     max_x = geo[0] + xsize * geo[1] + ysize * geo[2]
     max_y = geo[3]
     extent = (min_x, min_y, max_x, max_y)
-
     options = gdal.WarpOptions(resampleAlg=gdal.GRA_NearestNeighbour, xRes=x_res, yRes=y_res,
-                               outputBounds=extent, srcSRS=referenceSRS)
+                               outputBounds=extent, srcSRS=referenceSRS,
+                               creationOptions=['COMPRESS=DEFLATE', 'BIGTIFF=YES', 'BLOCKXSIZE=512',
+                                                'TILED=YES', 'NUM_THREADS=ALL_CPUS',
+                                                'SPARSE_OK=TRUE', 'INTERLEAVE=PIXEL'])
     gdal.Warp(output_filepath, input_filepath, options=options)
 
 def add_rasters(in1, in2, in3, in4, out):
     cmd = f"gdal_calc.py -A {in1} -B {in2} -C {in3} -D {in4} --outfile={out} --calc='A+B+C+D'"
     os.system(cmd)
-
-
+"""
 # downloading the soil type grid
 k = 0
 for lat in range(40, 60):
@@ -44,10 +45,8 @@ filenames = glob.glob('*.tif')
 cmd = "gdal_merge.py -o mergedRaster.tif"
 subprocess.call(cmd.split()+filenames)
 
-
 # download the soil grid percentage
 os.chdir("/Users/whamitchell/Documents/aws/subsidence/clay/claypct")
-depths = ["", "clay_5-15cm_mean", "clay_15-30cm_mean", "clay_30-60cm_mean", "clay_60-100cm_mean", "clay_100-200cm_mean"]
 # 0 - 5 cm clay percentage
 k = 0
 for lat in range(40, 60):
@@ -111,7 +110,10 @@ for lat in range(40, 60):
 filenames = glob.glob('*.tif')
 cmd = f"gdal_merge.py -o claypct_clay_30-60cm_mean.tif"
 subprocess.call(cmd.split() + filenames)
-
+"""
 # merging the soil grid files
+add_rasters("clay/claypct/claypct_clay_0-5cm_mean.tif","clay/claypct/claypct_clay_5-15cm_mean.tif",
+            "clay/claypct/claypct_clay_15-30cm_mean.tif","clay/claypct/claypct_clay_30-60cm_mean.tif",
+            "clay/claypct/claypct_cum.tif")
 lat_lon_transform("clay/claytype/mergedRaster.tif", "tifs/uk_dem_wgs84_0.0008.tif", "tifs/ClayTypes.tif")
-
+lat_lon_transform("clay/claypct/claypct_cum.tif", "tifs/uk_dem_wgs84_0.0008.tif", "tifs/ClayPct.tif")

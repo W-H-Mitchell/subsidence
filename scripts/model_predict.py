@@ -28,25 +28,26 @@ def predict(model, data, outraster):
     band = dst_ds.GetRasterBand(1)
     band.SetNoDataValue(-9999)
     dst_ds = None
-
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2020_baseline.h5",
-        "rcp85outputs/rcp85_2020_baseline.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2025-2034.h5",
-        "rcp85outputs/rcp85_2025-2034.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2035-2044.h5",
-        "rcp85outputs/rcp85_2035-2044.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2045-2054.h5",
-        "rcp85outputs/rcp85_2045-2054.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2055-2064.h5",
-        "rcp85outputs/rcp85_2055-2064.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2065-2074.h5",
-        "rcp85outputs/rcp85_2065-2074.tif")
-predict("climate_cond_models/rcp85_trained_no_cornwall.joblib",
-        "prediction/rcp85_2070-2079.h5",
-        "rcp85outputs/rcp85_2075-2084.tif")
+"""
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2020_baseline_soil.h5",
+        "rcp85outputs/rcp85_2020_bs_soil.tif")
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2025-2034_soil.h5",
+        "rcp85outputs/rcp85_2025-2034_soil.tif")
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2035-2044_soil.h5",
+        "rcp85outputs/rcp85_2035-2044_soil.tif")
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2045-2054_soil.h5",
+        "rcp85outputs/rcp85_2045-2054_soil.tif")
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2055-2064_soil.h5",
+        "rcp85outputs/rcp85_2055-2064_soil.tif")
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2065-2074_soil.h5",
+        "rcp85outputs/rcp85_2065-2074_soil.tif")
+"""
+predict("climate_cond_models/rcp85__soil.joblib",
+        "prediction/rcp85_2075-2084_soil.h5",
+        "rcp85outputs/rcp85_2075-2084_soil.tif")
