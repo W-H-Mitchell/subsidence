@@ -22,32 +22,34 @@ def predict(model, data, outraster):
     array[mask] = -9999
     
     driver = gdal.GetDriverByName('GTiff')
-    dst_ds = driver.CreateCopy(outraster, reference_raster, strict=0)
+    dst_ds = driver.CreateCopy(outraster, reference_raster, strict=0,
+                               options=['COMPRESS=DEFLATE','BIGTIFF=YES','BLOCKXSIZE=512',
+                                        'PREDICTOR=3','TILED=YES','NUM_THREADS=ALL_CPUS',
+                                        'SPARSE_OK=TRUE','INTERLEAVE=PIXEL'])
     dst_ds.GetRasterBand(1).WriteArray(array)
     dst_ds.SetGeoTransform(geo)
     band = dst_ds.GetRasterBand(1)
     band.SetNoDataValue(-9999)
     dst_ds = None
-"""
-predict("climate_cond_models/rcp85__soil.joblib",
+
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2020_baseline_soil.h5",
         "rcp85outputs/rcp85_2020_bs_soil.tif")
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2025-2034_soil.h5",
         "rcp85outputs/rcp85_2025-2034_soil.tif")
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2035-2044_soil.h5",
         "rcp85outputs/rcp85_2035-2044_soil.tif")
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2045-2054_soil.h5",
         "rcp85outputs/rcp85_2045-2054_soil.tif")
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2055-2064_soil.h5",
         "rcp85outputs/rcp85_2055-2064_soil.tif")
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2065-2074_soil.h5",
         "rcp85outputs/rcp85_2065-2074_soil.tif")
-"""
-predict("climate_cond_models/rcp85__soil.joblib",
+predict("climate_cond_models/rcp85_no_temp.joblib",
         "prediction/rcp85_2075-2084_soil.h5",
         "rcp85outputs/rcp85_2075-2084_soil.tif")

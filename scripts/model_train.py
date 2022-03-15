@@ -28,7 +28,7 @@ def train(train_data, outmodel, featout, outraster):
     RandRF_predY = rfr.predict(df.drop(['row', 'col', 'Disp_cmyr'], axis=1))
     # prediction to fill target class
     print("\n Creating raster...")
-    reference_raster = gdal.Open("tifs/final_dem.tif")
+    reference_raster = gdal.Open("tifs/uk_dem_wgs84_0.0008.tif")
     geo = reference_raster.GetGeoTransform()
     dem = reference_raster.ReadAsArray()
     xsize, ysize = reference_raster.RasterXSize, reference_raster.RasterYSize
@@ -60,5 +60,5 @@ def train(train_data, outmodel, featout, outraster):
         # write every key and value to file
         w.writerow([key, val])
 
-train("training/rcp85train_soil.h5", "rcp85_trained_soil", "rcp85_soil",
-      "training/rcp85_soil.tif")
+train("training/rcp85train_soil.h5", "rcp85_no_temp", "rcp85_no_temp",
+      "training/rcp85_no_temp.tif")

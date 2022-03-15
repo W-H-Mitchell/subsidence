@@ -110,10 +110,16 @@ for lat in range(40, 60):
 filenames = glob.glob('*.tif')
 cmd = f"gdal_merge.py -o claypct_clay_30-60cm_mean.tif"
 subprocess.call(cmd.split() + filenames)
-"""
 # merging the soil grid files
 add_rasters("clay/claypct/claypct_clay_0-5cm_mean.tif","clay/claypct/claypct_clay_5-15cm_mean.tif",
             "clay/claypct/claypct_clay_15-30cm_mean.tif","clay/claypct/claypct_clay_30-60cm_mean.tif",
             "clay/claypct/claypct_cum.tif")
 lat_lon_transform("clay/claytype/mergedRaster.tif", "tifs/uk_dem_wgs84_0.0008.tif", "tifs/ClayTypes.tif")
 lat_lon_transform("clay/claypct/claypct_cum.tif", "tifs/uk_dem_wgs84_0.0008.tif", "tifs/ClayPct.tif")
+"""
+lat_lon_transform("/Users/whamitchell/Documents/aws/inputs/tifs/superficial_encoded.tif",
+                  "/Users/whamitchell/Documents/aws/inputs/tifs/uk_dem_wgs84_0.0008.tif",
+                  "/Users/whamitchell/Documents/aws/inputs/tifs/superficial.tif")
+lat_lon_transform("/Users/whamitchell/Documents/aws/inputs/tifs/geology.tif",
+                  "/Users/whamitchell/Documents/aws/inputs/tifs/uk_dem_wgs84_0.0008.tif",
+                  "/Users/whamitchell/Documents/aws/inputs/tifs/geology.tif")

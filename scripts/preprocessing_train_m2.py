@@ -56,7 +56,8 @@ def data_gen(folder, rain, dem, temp, output_filename):
     # rasters
     z = gdal.Open(dem)
     s = gdal.Open("tifs/slope_gb.tif")
-    rock = gdal.Open("tifs/lithology_gb.tif")
+    #rock = gdal.Open("tifs/lithology_gb.tif")
+    twi =  gdal.Open("tifs/twi.tif")
     supf = gdal.Open("tifs/superficial_gb.tif")
     luc = gdal.Open("tifs/landuse_gb.tif")
     veg = gdal.Open("tifs/ndvi_gb.tif") #NDVI
@@ -71,16 +72,16 @@ def data_gen(folder, rain, dem, temp, output_filename):
 
     
     # Stack the geotifs of each feature and merge into a dataframe
-    dfs = [z, s, rock, supf, luc, veg, rivers,
-           disp, soiltyp, soilpct, rain, temp]
+    dfs = [z, s, twi, supf, luc, veg, rivers,
+           disp, soiltyp, soilpct, rain, temp] # rock
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
     merged = gdal.BuildVRT('', dfs, separate=True)
     merged_data = merged.ReadAsArray()
     ysize, xsize = merged.RasterYSize, merged.RasterXSize
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
-    column_names = ['z', 's', "RockClass", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
-                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] #
+    column_names = ['z', 's', "twi", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
+                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] # "RockClass",
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
     df['row'] = row.flatten()
     df['col'] = cols.flatten()
@@ -140,6 +141,7 @@ def data_gen(folder, rain, dem, temp, output_filename):
     enc_catDF = pd.concat([enc_catDF, cat_dummies], axis=1) # Append encoded columns 
     temp_df = imp_df.drop(['RockClass', 'SuperfDep', 'LUC','SoilType'], axis=1)
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
+    processDF = processDF.drop('RockClass', axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
     print("SAVED\n" + ("-")*30)
 
@@ -148,33 +150,33 @@ def data_gen(folder, rain, dem, temp, output_filename):
 data_gen("tifs/train2018/", "winter-summer_rain2018.tif",
          "tifs/Britain.tif",
          "summer_temperature.tif",
-         "training/rcp85train_soil.h5")
+         "training/rcp85train_nogeo.h5")
 # prediction
 data_gen("tifs/predict/", "rcp85_baseline2020_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_baseline2020_tas.tif",
-         "prediction/rcp85_2020_baseline_soil.h5")
+         "prediction/rcp85_2020_baseline_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2020-2029_summer_tas.tif",
-         "prediction/rcp85_2025-2034_soil.h5")
+         "prediction/rcp85_2025-2034_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2035-2044_summer_tas.tif",
-         "prediction/rcp85_2035-2044_soil.h5")
+         "prediction/rcp85_2035-2044_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2030-2039_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2035-2044_summer_tas.tif",
-         "prediction/rcp85_2045-2054_soil.h5")
+         "prediction/rcp85_2045-2054_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2060-2069_summer_tas.tif",
-         "prediction/rcp85_2055-2064_soil.h5")
+         "prediction/rcp85_2055-2064_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2065-2074_summer_tas.tif",
-         "prediction/rcp85_2065-2074_soil.h5")
+         "prediction/rcp85_2065-2074_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2075-2084_summer_tas.tif",
-         "prediction/rcp85_2075-2084_soil.h5")
+         "prediction/rcp85_2075-2084_nogeo.h5")
