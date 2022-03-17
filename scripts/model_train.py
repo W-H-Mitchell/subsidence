@@ -60,5 +60,5 @@ def train(train_data, outmodel, featout, outraster):
         # write every key and value to file
         w.writerow([key, val])
 
-train("training/rcp85train_soil.h5", "rcp85_no_temp", "rcp85_no_temp",
-      "training/rcp85_no_temp.tif")
+train("training/rcp85train_nogeo.h5","rcp85_nogeo","rcp85_nogeo",
+      "training/Rcp85_NoGeo.tif")

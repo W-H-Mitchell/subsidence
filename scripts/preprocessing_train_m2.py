@@ -73,7 +73,7 @@ def data_gen(folder, rain, dem, temp, output_filename):
     
     # Stack the geotifs of each feature and merge into a dataframe
     dfs = [z, s, twi, supf, luc, veg, rivers,
-           disp, soiltyp, soilpct, rain, temp] # rock
+           disp, soiltyp, soilpct, rain, temp] #rock
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
     merged = gdal.BuildVRT('', dfs, separate=True)
@@ -81,7 +81,7 @@ def data_gen(folder, rain, dem, temp, output_filename):
     ysize, xsize = merged.RasterYSize, merged.RasterXSize
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
     column_names = ['z', 's', "twi", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
-                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] # "RockClass",
+                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] #"RockClass",
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
     df['row'] = row.flatten()
     df['col'] = cols.flatten()
@@ -91,10 +91,10 @@ def data_gen(folder, rain, dem, temp, output_filename):
     row, col = df['row'].values.flatten(), df['col'].values.flatten()
     
     # map categorical data
-    geo_file = open("geology_dictionary.txt", "r")
-    contents = geo_file.read()
-    geo_dict = ast.literal_eval(contents)
-    geo_dict = dict((v,k) for k,v in geo_dict.items())
+    #geo_file = open("geology_dictionary.txt", "r")
+    #contents = geo_file.read()
+    #geo_dict = ast.literal_eval(contents)
+    #geo_dict = dict((v,k) for k,v in geo_dict.items())
     # superficial 
     sup_file = open("superficial_dictionary.txt", "r")
     contents = sup_file.read()
@@ -107,11 +107,11 @@ def data_gen(folder, rain, dem, temp, output_filename):
                 12:'Gleysols',14:'Histosols',16:'Andosols',17:'Lixisols',18:'Luvisols',20:'Phaeozems',
                 21:'Planosols',23:'Podzols',27:'Stagnosols'}
     # replace added new values
-    df['RockClass'][~df['RockClass'].isin(geo_dict.keys())] = np.nan
+    #df['RockClass'][~df['RockClass'].isin(geo_dict.keys())] = np.nan
     df['SuperfDep'][~df['SuperfDep'].isin(sup_dict.keys())] = np.nan
     df['SoilType'].replace(soil_dict, inplace=True)
     df['SuperfDep'].replace(sup_dict, inplace=True)
-    df['RockClass'].replace(geo_dict, inplace=True)
+    #df['RockClass'].replace(geo_dict, inplace=True)
     df['LUC'].replace(LUC_map, inplace=True)
     df['s'].replace(-9999, 0, inplace=True)
     df['Disp_cmyr'] = df["Disp_cmyr"].values * 10
@@ -128,20 +128,19 @@ def data_gen(folder, rain, dem, temp, output_filename):
         catDf[_][(catDf[_]==-9999.0)] = np.nan 
     df = pd.concat([numDf, catDf], axis=1, join='outer')
     # Drop columns that we do not want to impute missing values in
-    data = df.drop(['RockClass','SuperfDep','Disp_cmyr','SoilType'], axis=1)
+    data = df.drop(['SuperfDep','Disp_cmyr','SoilType'], axis=1) #'RockClass',
     imp_df = DataFrameImputer().fit_transform(data)
     assert len(imp_df.isna()==0), "Imputing Error: imputed dataframe contains NaN"
-    imp_df = pd.concat([imp_df, df[["RockClass","SuperfDep","Disp_cmyr","SoilType"]]], axis=1)
+    imp_df = pd.concat([imp_df, df[["SuperfDep","Disp_cmyr","SoilType"]]], axis=1) #'RockClass',
     
     print('encoding')
     # ENCODING
     enc_catDF = pd.DataFrame(index=catDf.index)
-    cat_variables = imp_df[['RockClass','SuperfDep','LUC','SoilType']]
+    cat_variables = imp_df[['SuperfDep','LUC','SoilType']] #'RockClass',
     cat_dummies = pd.get_dummies(cat_variables, drop_first=True)
     enc_catDF = pd.concat([enc_catDF, cat_dummies], axis=1) # Append encoded columns 
-    temp_df = imp_df.drop(['RockClass', 'SuperfDep', 'LUC','SoilType'], axis=1)
+    temp_df = imp_df.drop(['SuperfDep', 'LUC','SoilType'], axis=1) #'RockClass',
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
-    processDF = processDF.drop('RockClass', axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
     print("SAVED\n" + ("-")*30)
 
@@ -160,17 +159,17 @@ data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2020-2029_summer_tas.tif",
          "prediction/rcp85_2025-2034_nogeo.h5")
-data_gen("tifs/predict/", "rcp85_model_2025-2034_winter-summer_rainfall.tif",
+data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2035-2044_summer_tas.tif",
          "prediction/rcp85_2035-2044_nogeo.h5")
-data_gen("tifs/predict/", "rcp85_model_2030-2039_winter-summer_rainfall.tif",
+data_gen("tifs/predict/", "rcp85_model_2045-2054_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
-         "rcp85_model_2035-2044_summer_tas.tif",
+         "rcp85_model_2045-2054_summer_tas_lin.tif",
          "prediction/rcp85_2045-2054_nogeo.h5")
-data_gen("tifs/predict/", "rcp85_model_2060-2069_winter-summer_rainfall.tif",
+data_gen("tifs/predict/", "rcp85_model_2055-2064_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
-         "rcp85_model_2060-2069_summer_tas.tif",
+         "rcp85_model_2055-2064_summer_tas_lin.tif",
          "prediction/rcp85_2055-2064_nogeo.h5")
 data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
