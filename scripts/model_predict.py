@@ -32,24 +32,24 @@ def predict(model, data, outraster):
     band.SetNoDataValue(-9999)
     dst_ds = None
 
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2020_baseline_soil.h5",
-        "rcp85outputs/rcp85_2020_bs_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2025-2034_soil.h5",
-        "rcp85outputs/rcp85_2025-2034_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2035-2044_soil.h5",
-        "rcp85outputs/rcp85_2035-2044_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2045-2054_soil.h5",
-        "rcp85outputs/rcp85_2045-2054_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2055-2064_soil.h5",
-        "rcp85outputs/rcp85_2055-2064_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2065-2074_soil.h5",
-        "rcp85outputs/rcp85_2065-2074_soil.tif")
-predict("climate_cond_models/rcp85_no_temp.joblib",
-        "prediction/rcp85_2075-2084_soil.h5",
-        "rcp85outputs/rcp85_2075-2084_soil.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2020_baseline_nogeo.h5",
+        "rcp85outputs/rcp85_2020_bl_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2025-2034_nogeo.h5",
+        "rcp85outputs/rcp85_2025-2034_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2035-2044_nogeo.h5",
+        "rcp85outputs/rcp85_2035-2044_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2045-2054_nogeo.h5",
+        "rcp85outputs/rcp85_2045-2054_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2055-2064_nogeo.h5",
+        "rcp85outputs/rcp85_2055-2064_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2065-2074_nogeo.h5",
+        "rcp85outputs/rcp85_2065-2074_geo.tif")
+predict("climate_cond_models/rcp85_nogeo.joblib",
+        "prediction/rcp85_2075-2084_nogeo.h5",
+        "rcp85outputs/rcp85_2075-2084_geo.tif")

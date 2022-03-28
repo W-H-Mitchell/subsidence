@@ -2,7 +2,9 @@
 import ast
 import pandas as pd
 import numpy as np
+import seaborn as sns
 from osgeo import gdal
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.base import TransformerMixin
 
@@ -56,8 +58,8 @@ def data_gen(folder, rain, dem, temp, output_filename):
     # rasters
     z = gdal.Open(dem)
     s = gdal.Open("tifs/slope_gb.tif")
-    #rock = gdal.Open("tifs/lithology_gb.tif")
-    twi =  gdal.Open("tifs/twi.tif")
+    rock = gdal.Open("tifs/lithology.tif")
+    #twi =  gdal.Open("tifs/twi.tif")
     supf = gdal.Open("tifs/superficial_gb.tif")
     luc = gdal.Open("tifs/landuse_gb.tif")
     veg = gdal.Open("tifs/ndvi_gb.tif") #NDVI
@@ -72,16 +74,16 @@ def data_gen(folder, rain, dem, temp, output_filename):
 
     
     # Stack the geotifs of each feature and merge into a dataframe
-    dfs = [z, s, twi, supf, luc, veg, rivers,
-           disp, soiltyp, soilpct, rain, temp] #rock
+    dfs = [z, s, rock, supf, luc, veg, rivers,
+           disp, soiltyp, soilpct, rain, temp] #twi
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
     merged = gdal.BuildVRT('', dfs, separate=True)
     merged_data = merged.ReadAsArray()
     ysize, xsize = merged.RasterYSize, merged.RasterXSize
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
-    column_names = ['z', 's', "twi", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
-                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] #"RockClass",
+    column_names = ['z', 's', "Rock", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
+                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_c"] #twi
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
     df['row'] = row.flatten()
     df['col'] = cols.flatten()
@@ -91,15 +93,18 @@ def data_gen(folder, rain, dem, temp, output_filename):
     row, col = df['row'].values.flatten(), df['col'].values.flatten()
     
     # map categorical data
-    #geo_file = open("geology_dictionary.txt", "r")
-    #contents = geo_file.read()
-    #geo_dict = ast.literal_eval(contents)
-    #geo_dict = dict((v,k) for k,v in geo_dict.items())
     # superficial 
     sup_file = open("superficial_dictionary.txt", "r")
     contents = sup_file.read()
     sup_dict = ast.literal_eval(contents)
     sup_dict = dict((v,k) for k,v in sup_dict.items())
+    lith_map = {1: 'IGNEOUS or METAMORPHIC', 2: 'CLAY', 3: 'LIAS GROUP', 4: 'LONDON CLAY',
+                 5: 'LAMBETH GROUP', 6: 'MERCIA - MUDSTONE, SILTSTONE AND SANDSTONE',
+                 7: 'MERCIA - MUDSTONE WITH GYPSUM-STONE AND/OR ANHYDRITE-STONE',
+                 8: 'MERCIA - MUDSTONE AND HALITE-STONE', 9: 'MERCIA - MUDSTONE',
+                 10: 'MERCIA - MUDSTONE AND SILTSTONE', 11: 'GAULT FM', 12: 'GAULT - MUDSTONE',
+                 13: 'KELLAWAYS FM', 14: 'WEALD CLAY', 15: 'OXFORD CLAY', 16: 'WADHURST CLAY',
+                 17: 'BARTON GROUP', 18: 'WEALDEN GROUP', 19: 'KIMMERIDGE CLAY', 20: 'AMPTHILL CLAY'}
     LUC_map = {10: 'Tree cover', 20: 'Shrubland', 30: 'Grassland', 40: 'Cropland',
                50: 'Built-up', 60: 'Sparse vegetation', 80: 'Permanent water bodies',
                90: 'Herbaceous wetland', 100: 'Moss and lichen'}
@@ -107,11 +112,11 @@ def data_gen(folder, rain, dem, temp, output_filename):
                 12:'Gleysols',14:'Histosols',16:'Andosols',17:'Lixisols',18:'Luvisols',20:'Phaeozems',
                 21:'Planosols',23:'Podzols',27:'Stagnosols'}
     # replace added new values
-    #df['RockClass'][~df['RockClass'].isin(geo_dict.keys())] = np.nan
+    #df['Rock'][~df['Rock'].isin(geo_dict.keys())] = np.nan
     df['SuperfDep'][~df['SuperfDep'].isin(sup_dict.keys())] = np.nan
     df['SoilType'].replace(soil_dict, inplace=True)
     df['SuperfDep'].replace(sup_dict, inplace=True)
-    #df['RockClass'].replace(geo_dict, inplace=True)
+    df['Rock'].replace(lith_map, inplace=True)
     df['LUC'].replace(LUC_map, inplace=True)
     df['s'].replace(-9999, 0, inplace=True)
     df['Disp_cmyr'] = df["Disp_cmyr"].values * 10
@@ -128,23 +133,37 @@ def data_gen(folder, rain, dem, temp, output_filename):
         catDf[_][(catDf[_]==-9999.0)] = np.nan 
     df = pd.concat([numDf, catDf], axis=1, join='outer')
     # Drop columns that we do not want to impute missing values in
-    data = df.drop(['SuperfDep','Disp_cmyr','SoilType'], axis=1) #'RockClass',
+    data = df.drop(['SuperfDep','Disp_cmyr','SoilType',"Rock"], axis=1)
     imp_df = DataFrameImputer().fit_transform(data)
     assert len(imp_df.isna()==0), "Imputing Error: imputed dataframe contains NaN"
-    imp_df = pd.concat([imp_df, df[["SuperfDep","Disp_cmyr","SoilType"]]], axis=1) #'RockClass',
+    imp_df = pd.concat([imp_df, df[["SuperfDep","Disp_cmyr","SoilType", "Rock"]]], axis=1)
     
     print('encoding')
     # ENCODING
     enc_catDF = pd.DataFrame(index=catDf.index)
-    cat_variables = imp_df[['SuperfDep','LUC','SoilType']] #'RockClass',
+    cat_variables = imp_df[['SuperfDep','LUC','SoilType', 'Rock']]
     cat_dummies = pd.get_dummies(cat_variables, drop_first=True)
     enc_catDF = pd.concat([enc_catDF, cat_dummies], axis=1) # Append encoded columns 
-    temp_df = imp_df.drop(['SuperfDep', 'LUC','SoilType'], axis=1) #'RockClass',
+    temp_df = imp_df.drop(['SuperfDep', 'LUC','SoilType', 'Rock'], axis=1)
     processDF = pd.concat([temp_df, enc_catDF], axis=1)
     processDF.to_hdf(output_filename, key='df', mode='w')
+    print(processDF.shape)
     print("SAVED\n" + ("-")*30)
 
+def multicollinearity_check(data, matrix, plot):
+    # correlation matrix
+    df = pd.read_hdf(data)
+    corrmatrix = df.corr()
+    corrmatrix.to_csv(matrix)
 
+    # plot
+    fig, ax = plt.subplot(figsize=(40, 40))
+    sns.heatmap(corrmatrix, ax=ax)
+    plt.gcf()
+    plt.savefig(plot)
+
+
+"""
 # training 
 data_gen("tifs/train2018/", "winter-summer_rain2018.tif",
          "tifs/Britain.tif",
@@ -179,3 +198,7 @@ data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2075-2084_summer_tas.tif",
          "prediction/rcp85_2075-2084_nogeo.h5")
+"""
+multicollinearity_check("training/rcp85train_nogeo.h5",
+                        "training/correlation_matrix.csv",
+                        "training/corr_heatmap.png")
