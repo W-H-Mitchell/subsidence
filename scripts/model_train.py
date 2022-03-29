@@ -22,11 +22,11 @@ def train(train_data, outmodel, outraster):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
     
     ### Model Training
-    rfr = RandomForestRegressor(random_state=42, n_jobs=-1,
-                                min_samples_split=10000, verbose=100)
+    rfr = RandomForestRegressor(random_state=42, n_jobs=-1, max_features=0.3,
+                                min_samples_split=10000, verbose=100) #max_depth=100,
     rfr.fit(X_train, y_train)
     y_pred = rfr.predict(X_test)
-    dump(rfr, 'climate_cond_models/{0}.joblib'.format(outmodel))
+    dump(rfr, f'climate_cond_models/{outmodel}')
     # evaluation metrics
     print('Verification set:\nMean Absolute Error: {0}; Mean Absolute Percentage Error: {1}'.format(mean_absolute_error(y_test, y_pred), mean_absolute_percentage_error(y_test, y_pred)))
 
@@ -99,10 +99,8 @@ def feature_importance(model, train_data, rf_featout, perm_featout, perm_plt):
 
 
 
-#train("training/rcp85train_nogeo.h5","rcp85_nogeo","rcp85_nogeo",
-#     "training/Rcp85_NoGeo.tif")
-feature_importance("climate_cond_models/rcp85_nogeo.joblib",
-                   "training/rcp85train_nogeo.h5",
-                   "feat_importance/rcp85_nogeology_rf.csv",
-                   "feat_importance/rcp85_nogeology_perm.csv",
-                   "feat_importance/rcp85_nogeo_perm.png")
+train("training/rcp85train_nopr.h5", "rcp85_nopr_regularised.joblib",
+     "training/Rcp85_NoTemp.tif")
+#feature_importance("climate_cond_models/rcp85_notemp.joblib","training/rcp85train_notemp.h5",
+#                   "feat_importance/rcp85_notemp_rf.csv","feat_importance/rcp85_notemp_perm.csv",
+#                   "feat_importance/rcp85_notemp_perm.png")
