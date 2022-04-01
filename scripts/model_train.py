@@ -22,8 +22,8 @@ def train(train_data, outmodel, outraster):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
     
     ### Model Training
-    rfr = RandomForestRegressor(random_state=42, n_jobs=-1, max_features=0.3,
-                                min_samples_split=10000, verbose=100) #max_depth=100,
+    rfr = RandomForestRegressor(random_state=42, n_jobs=-1,
+                                min_samples_split=3000, verbose=100) #max_depth=100,max_features=0.5,
     rfr.fit(X_train, y_train)
     y_pred = rfr.predict(X_test)
     dump(rfr, f'climate_cond_models/{outmodel}')
@@ -99,7 +99,7 @@ def feature_importance(model, train_data, rf_featout, perm_featout, perm_plt):
 
 
 
-train("training/rcp85train_nopr.h5", "rcp85_nopr_regularised.joblib",
+train("training/rcp85train_reg.h5", "rcp85__regularised.joblib",
      "training/Rcp85_NoTemp.tif")
 #feature_importance("climate_cond_models/rcp85_notemp.joblib","training/rcp85train_notemp.h5",
 #                   "feat_importance/rcp85_notemp_rf.csv","feat_importance/rcp85_notemp_perm.csv",

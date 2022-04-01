@@ -75,7 +75,7 @@ def data_gen(folder, rain, dem, temp, output_filename):
     
     # Stack the geotifs of each feature and merge into a dataframe
     dfs = [z, s, rock, supf, luc, veg, rivers,
-           disp, soiltyp, soilpct, rain] #temp
+           disp, soiltyp, soilpct, rain, temp]
     for df in dfs: 
         print(df.RasterYSize, df.RasterXSize)
     merged = gdal.BuildVRT('', dfs, separate=True)
@@ -83,7 +83,7 @@ def data_gen(folder, rain, dem, temp, output_filename):
     ysize, xsize = merged.RasterYSize, merged.RasterXSize
     row, cols = np.mgrid[0:ysize:1, 0:xsize:1]
     column_names = ['z', 's', "Rock", "SuperfDep", "LUC", "NDVI", "DistRiv_m",
-                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall"] #"deg_C"
+                    "Disp_cmyr", "SoilType", "SoilPct", "Rainfall", "deg_C"]
     df = pd.DataFrame(data=merged_data.reshape((len(dfs), -1)).T, columns=column_names)
     df['row'] = row.flatten()
     df['col'] = cols.flatten()
@@ -174,36 +174,36 @@ def multicollinearity_check(data, matrix, plot):
 data_gen("tifs/train2018/", "winter-summer_rain2018.tif",
          "tifs/Britain.tif",
          "summer_temperature.tif",
-         "training/rcp85train_notemp.h5")
+         "training/rcp85train_reg.h5")
 # prediction
 data_gen("tifs/predict/", "rcp85_baseline2020_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_baseline2020_tas.tif",
-         "prediction/rcp85_2020_baseline_notemp.h5")
+         "prediction/rcp85_2020_baseline.h5")
 data_gen("tifs/predict/", "rcp85_model_2020-2029_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2020-2029_summer_tas.tif",
-         "prediction/rcp85_2025-2034_notemp.h5")
+         "prediction/rcp85_2025-2034.h5")
 data_gen("tifs/predict/", "rcp85_model_2035-2044_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2035-2044_summer_tas.tif",
-         "prediction/rcp85_2035-2044_notemp.h5")
+         "prediction/rcp85_2035-2044.h5")
 data_gen("tifs/predict/", "rcp85_model_2045-2054_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2045-2054_summer_tas_lin.tif",
-         "prediction/rcp85_2045-2054_notemp.h5")
+         "prediction/rcp85_2045-2054.h5")
 data_gen("tifs/predict/", "rcp85_model_2055-2064_winter-summer_rainfall_lin.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2055-2064_summer_tas_lin.tif",
-         "prediction/rcp85_2055-2064_notemp.h5")
+         "prediction/rcp85_2055-2064.h5")
 data_gen("tifs/predict/", "rcp85_model_2065-2074_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2065-2074_summer_tas.tif",
-         "prediction/rcp85_2065-2074_notemp.h5")
+         "prediction/rcp85_2065-2074.h5")
 data_gen("tifs/predict/", "rcp85_model_2070-2079_winter-summer_rainfall.tif",
          "tifs/uk_dem_wgs84_0.0008.tif",
          "rcp85_model_2075-2084_summer_tas.tif",
-         "prediction/rcp85_2075-2084_notemp.h5")
+         "prediction/rcp85_2075-2084.h5")
 """
 multicollinearity_check("training/rcp85train_nopr.h5",
                         "training/correlation_matrix_nopr.csv",

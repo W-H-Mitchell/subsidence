@@ -59,12 +59,12 @@ def PredictNoLoss(model, data, outraster):
     band.SetNoDataValue(-9999)
     dst_ds = None
 
-predict("climate_cond_models/rcp85_nopr_regularised.joblib",
-        "prediction/rcp85_2020_baseline_nopr.h5",
-        "rcp85outputs/rcp85_2020_bl_nopr_reg.tif")
-predict("climate_cond_models/rcp85_nopr_regularised.joblib",
-        "prediction/rcp85_2055-2064_nopr.h5",
-        "rcp85outputs/rcp85_2055-2064_nopr_reg.tif")
+predict("climate_cond_models/rcp85__regularised.joblib",
+        "prediction/rcp85_2020_baseline.h5",
+        "rcp85outputs/rcp85_2020_bl_reg.tif")
+predict("climate_cond_models/rcp85__regularised.joblib",
+        "prediction/rcp85_2055-2064.h5",
+        "rcp85outputs/rcp85_2055-2064_reg.tif")
 """
 predict("climate_cond_models/rcp85_notemp.joblib",
         "prediction/rcp85_2025-2034_notemp.h5",
